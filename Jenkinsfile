@@ -1,4 +1,9 @@
 pipeline {
+stage('Prepare Docker CLI') {
+    steps {
+        sh 'apk add --no-cache docker-cli'
+    }
+}
     agent {
         docker {
             image 'node:16-alpine'
@@ -20,11 +25,6 @@ pipeline {
             }
         }
         
-stage('Prepare Docker CLI') {
-    steps {
-        sh 'apk add --no-cache docker-cli'
-    }
-}
 
         stage('Install Dependencies') {
             steps {
