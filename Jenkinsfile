@@ -19,6 +19,12 @@ pipeline {
                 git branch: 'master', url: 'https://github.com/hamzaiteam/angular_app.git' ,credentialsId: 'git-credentials'
             }
         }
+        
+stage('Prepare Docker CLI') {
+    steps {
+        sh 'apk add --no-cache docker-cli'
+    }
+}
 
         stage('Install Dependencies') {
             steps {
