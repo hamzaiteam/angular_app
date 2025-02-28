@@ -37,20 +37,6 @@ pipeline {
         }
 
 
-        stage('SonarQube Analysis') {
-            steps {
-                withSonarQubeEnv('My SonarQube') {
-                    sh """
-                       npx sonar-scanner \
-                       -Dsonar.projectKey=angular_app \
-                       -Dsonar.sources=./src \
-                       -Dsonar.host.url=\$SONARQUBE_URL \
-                       -Dsonar.login=\$SONARQUBE_AUTH_TOKEN
-                    """
-                }
-            }
-        }
-
         stage('Build Docker Image') {
             steps {
                 script {
