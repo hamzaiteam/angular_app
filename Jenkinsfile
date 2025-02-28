@@ -2,14 +2,15 @@ pipeline {
     agent any
 
     environment {
+        // Reference the Jenkins credentials with ID 'dockerhub-credentials'
         DOCKERHUB_CREDENTIALS = credentials('dockerhub-credentials') 
-        // Jenkins credential ID with username/password for Docker Hub
     }
 
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/your-username/angular-cicd-demo.git'
+                // Updated repository URL with your GitHub repo
+                git branch: 'main', url: 'https://github.com/hamzaiteam/angular_app.git'
             }
         }
 
@@ -34,10 +35,10 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('My SonarQube') {
-                    // Use SonarQube Scanner
+                    // Run SonarQube analysis using the scanner; update parameters as needed
                     sh """
                        npx sonar-scanner \
-                       -Dsonar.projectKey=angular-cicd-demo \
+                       -Dsonar.projectKey=angular_app \
                        -Dsonar.sources=./src \
                        -Dsonar.host.url=\$SONARQUBE_URL \
                        -Dsonar.login=\$SONARQUBE_AUTH_TOKEN
@@ -49,9 +50,9 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    // We'll tag the image with the Jenkins BUILD_NUMBER for versioning
+                    // Tag the Docker image with the Jenkins BUILD_NUMBER for versioning
                     sh """
-                        docker build -t \${DOCKERHUB_CREDENTIALS_USR}/angular-cicd-demo:\${BUILD_NUMBER} .
+                        docker build -t \${DOCKERHUB_CREDENTIALS_USR}/angular_app:\${BUILD_NUMBER} .
                     """
                 }
             }
@@ -60,8 +61,9 @@ pipeline {
         stage('Push Docker Image') {
             steps {
                 script {
+                    // Login to Docker Hub using the credentials from Jenkins
                     sh "docker login -u \${DOCKERHUB_CREDENTIALS_USR} -p \${DOCKERHUB_CREDENTIALS_PSW}"
-                    sh "docker push \${DOCKERHUB_CREDENTIALS_USR}/angular-cicd-demo:\${BUILD_NUMBER}"
+                    sh "docker push \${DOCKERHUB_CREDENTIALS_USR}/angular_app:\${BUILD_NUMBER}"
                 }
             }
         }
