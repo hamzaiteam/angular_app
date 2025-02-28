@@ -1,21 +1,28 @@
 pipeline {
     agent {
-        docker { image 'node:22.14.0-alpine3.21' }
+        docker {
+            image 'node:16-alpine'
+            args '-v /var/run/docker.sock:/var/run/docker.sock -u root' // Run as root to install packages
+        }
     }
 
     environment {
-        // Reference the Jenkins credentials with ID 'dockerhub-credentials'
         DOCKERHUB_CREDENTIALS = credentials('dockerhub-credentials') 
     }
 
     stages {
         stage('Checkout') {
             steps {
-                // Updated repository URL with your GitHub repo
-                git branch: 'master', url: 'https://github.com/hamzaiteam/angular_app.git' ,credentialsId: 'git-credentials'
+                git branch: 'master', url: 'https://github.com/hamzaiteam/angular_app.git', credentialsId: 'git-credentials'
             }
         }
-        
+
+        stage('Install Docker CLI') {
+            steps {
+                // Install Docker CLI in the Alpine-based container
+                sh 'apk update && apk add docker'
+            }
+        }
 
         stage('Install Dependencies') {
             steps {
@@ -38,7 +45,6 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('My SonarQube') {
-                    // Run SonarQube analysis using the scanner; update parameters as needed
                     sh """
                        npx sonar-scanner \
                        -Dsonar.projectKey=angular_app \
@@ -53,7 +59,6 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    // Tag the Docker image with the Jenkins BUILD_NUMBER for versioning
                     sh """
                         docker build -t \${DOCKERHUB_CREDENTIALS_USR}/angular_app:\${BUILD_NUMBER} .
                     """
@@ -64,7 +69,6 @@ pipeline {
         stage('Push Docker Image') {
             steps {
                 script {
-                    // Login to Docker Hub using the credentials from Jenkins
                     sh "docker login -u \${DOCKERHUB_CREDENTIALS_USR} -p \${DOCKERHUB_CREDENTIALS_PSW}"
                     sh "docker push \${DOCKERHUB_CREDENTIALS_USR}/angular_app:\${BUILD_NUMBER}"
                 }
