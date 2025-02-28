@@ -1,5 +1,11 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'node:16-alpine'
+            // Mount the Docker socket if you need to run Docker commands (like building images) later
+            args '-v /var/run/docker.sock:/var/run/docker.sock'
+        }
+    }
 
     environment {
         // Reference the Jenkins credentials with ID 'dockerhub-credentials'
