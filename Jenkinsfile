@@ -9,7 +9,7 @@ pipeline {
     triggers {
         githubPush()
     }
-    
+
     environment {
         DOCKERHUB_CREDENTIALS = credentials('dockerhub-credentials') 
     }
@@ -39,7 +39,6 @@ pipeline {
                 sh 'npm run build'
             }
         }
-
 
         stage('Build Docker Image') {
             steps {
