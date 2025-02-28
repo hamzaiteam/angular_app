@@ -1,10 +1,6 @@
 pipeline {
     agent {
-        docker {
-            image 'node:16-alpine'
-            // Mount the Docker socket if you need to run Docker commands (like building images) later
-            args '-v /var/run/docker.sock:/var/run/docker.sock'
-        }
+        docker { image 'node:22.14.0-alpine3.21' }
     }
 
     environment {
