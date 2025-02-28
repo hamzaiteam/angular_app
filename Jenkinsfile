@@ -10,7 +10,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 // Updated repository URL with your GitHub repo
-                git branch: 'main', url: 'https://github.com/hamzaiteam/angular_app.git'
+                git branch: 'main', url: 'https://github.com/hamzaiteam/angular_app.git' ,credentialsId: 'git-credentials'
             }
         }
 
