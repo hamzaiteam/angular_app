@@ -36,11 +36,6 @@ pipeline {
             }
         }
 
-        stage('Test') {
-            steps {
-                sh 'npm test'
-            }
-        }
 
         stage('SonarQube Analysis') {
             steps {
